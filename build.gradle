@@ -1,3 +1,5 @@
+// Copyright © 2018 DELL Inc. or its subsidiaries.  All Rights Reserved.
+
 apply plugin: 'com.github.jacobono.jaxb'
 apply plugin: 'java'
 apply plugin: 'eclipse'
@@ -8,6 +10,7 @@ apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'signing'
 apply plugin: 'maven'
 //apply plugin: 'nebula.lint'
+apply plugin: 'io.codearte.nexus-staging'
 
 sourceCompatibility = 1.8
 version = "${version}"
@@ -30,6 +33,7 @@ buildscript {
        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.1"
        classpath "gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.13.1"
        //classpath 'com.netflix.nebula:gradle-lint-plugin:latest.release'
+       classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.11.0"
   }
 }
 
@@ -63,6 +67,11 @@ javadoc {
     }
 }
 
+task snapshotJar(type: Jar){
+    baseName =  archivesBaseName
+    version = '1.0-SNAPSHOT'
+}
+
 task sourcesJar(type: Jar) {
     classifier = 'sources'
     from sourceSets.main.allSource
@@ -72,7 +81,6 @@ task javadocJar(type: Jar) {
     classifier = 'javadoc'
     from javadoc
 }
-
 
 repositories {
 	mavenLocal()
@@ -167,7 +175,7 @@ uploadArchives {
 }
 
 artifacts {
-    archives javadocJar, sourcesJar
+    archives javadocJar, sourcesJar, snapshotJar
 }
 
 signing {
